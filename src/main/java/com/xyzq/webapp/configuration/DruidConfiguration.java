@@ -12,15 +12,15 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 /**
- * Package: com.xyzq.webapp.configuration
- * Description： Druid配置类
- * Author: linkan
- * Date: Created in 2019/8/1 13:52
- * Copyright: Copyright (c) 2019
- * Version: 0.0.1
+ * @Package com.xyzq.webapp.configuration
+ * @Description Druid配置类
+ * @author linkan
+ * @date Created in 2019/8/19 23:38
+ * @Copyright Copyright (c) 2019
+ * @Version 0.0.1
  */
 @Configuration
-public class DruidConfiguration {
+class DruidConfiguration {
 
 	private static final String DB_PREFIX = "spring.datasource";
 	
@@ -30,12 +30,17 @@ public class DruidConfiguration {
         return new DruidDataSource();
     }
 
+    /**
+     * @Description
+     * @author linkan
+     * @date 2019/8/19 23:45
+     * @return org.springframework.boot.web.servlet.ServletRegistrationBean<com.alibaba.druid.support.http.StatViewServlet>
+     */
     @Bean
-    public ServletRegistrationBean<StatViewServlet> DruidStatViewServle(){
+    public ServletRegistrationBean<StatViewServlet> DruidStatViewServlet(){
        //org.springframework.boot.context.embedded.ServletRegistrationBean提供类的进行注册.
-       ServletRegistrationBean<StatViewServlet> servletRegistrationBean =
-               new ServletRegistrationBean<>(new StatViewServlet(), "/druid/*");
-       
+       ServletRegistrationBean<StatViewServlet> servletRegistrationBean = new ServletRegistrationBean<>(new StatViewServlet(), "/druid/*");
+
        //添加初始化参数：initParams
        //白名单：
        servletRegistrationBean.addInitParameter("allow","127.0.0.1");
@@ -49,7 +54,12 @@ public class DruidConfiguration {
        return servletRegistrationBean;
     }
     
-
+    /**
+     * @Description druid添加过滤规则
+     * @author linkan
+     * @date 2019/8/19 23:46
+     * @return org.springframework.boot.web.servlet.FilterRegistrationBean<com.alibaba.druid.support.http.WebStatFilter>
+     */
     @Bean
     public FilterRegistrationBean<WebStatFilter> druidStatFilter(){
        

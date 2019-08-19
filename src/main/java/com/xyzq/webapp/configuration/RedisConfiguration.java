@@ -14,13 +14,12 @@ import com.xyzq.webapp.redis.SerializeUtils;
 import redis.clients.jedis.JedisPoolConfig;
 
 /**
- * Package: com.xyzq.webapp.configuration
- * Description： redis配置类
- * Author: linkan
- * Date: Created in 2019/8/1 13:52
- * Company: 兴业证券
- * Copyright: Copyright (c) 2019
- * Version: 0.0.1
+ * @Package com.xyzq.webapp.configuration
+ * @author linkan
+ * @Description redis配置类
+ * @date Created in 2019/8/19 23:38
+ * @Copyright Copyright (c) 2019
+ * @Version 0.0.1
  */
 @Configuration
 public class RedisConfiguration {
@@ -50,9 +49,10 @@ public class RedisConfiguration {
     private String password;
 
     /**
-     * Title: jedisPoolConfig
-     * Description: 连接池
-     * @return JedisPoolConfig
+     * @Description 连接池
+     * @author linkan
+     * @date 2019/8/19 23:49
+     * @return redis.clients.jedis.JedisPoolConfig
      */
     @Bean
     public JedisPoolConfig jedisPoolConfig(){
@@ -78,10 +78,12 @@ public class RedisConfiguration {
         return jedisPoolConfig;
     }
 
+
     /**
-     * Title: JedisConnectionFactory
-     * Description: 单机模式
-     * @return JedisConnectionFactory
+     * @Description 单机模式
+     * @author linkan
+     * @date 2019/8/19 23:52
+     * @return org.springframework.data.redis.connection.jedis.JedisConnectionFactory
      */
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
@@ -94,12 +96,12 @@ public class RedisConfiguration {
         return new JedisConnectionFactory(redisStandaloneConfiguration);
     }
 
-
     /**
-     * Title: redisTemplate
-     * Description: redis缓存使用的模板
+     * @Description redis缓存使用的模板
+     * @author linkan
+     * @date 2019/8/19 23:52
      * @param redisConnectionFactory redis连接工厂类
-     * @return RedisTemplate
+     * @return org.springframework.data.redis.core.RedisTemplate<java.lang.String,java.lang.Object>
      */
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {

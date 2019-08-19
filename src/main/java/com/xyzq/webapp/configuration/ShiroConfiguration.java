@@ -37,22 +37,22 @@ import com.xyzq.webapp.listener.ShiroSessionListener;
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 
 /**
- * Package: com.xyzq.webapp.configuration
- * Description： shiro配置类
- * Author: linkan
- * Date: Created in 2019/8/1 13:52
- * Company: 兴业证券
- * Copyright: Copyright (c) 2019
- * Version: 0.0.1
+ * @Package com.xyzq.webapp.configuration
+ * @Description shiro配置类
+ * @author linkan
+ * @date Created in 2019/8/19 23:38
+ * @Copyright Copyright (c) 2019
+ * @Version 0.0.1
  */
 @Configuration
 public class ShiroConfiguration {
 
     /**
-     * Title: shirFilter
-     * Description: shiro过滤器
+     * @Description shiro过滤器
+     * @author linkan
+     * @date 2019/8/19 23:53
      * @param securityManager 安全管理类
-     * @return ShiroFilterFactoryBean
+     * @return org.apache.shiro.spring.web.ShiroFilterFactoryBean
      */
 	@Bean
     public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
@@ -96,11 +96,12 @@ public class ShiroConfiguration {
 
         return shiroFilterFactoryBean;
 	}
-	
+
 	/**
-	 * Title: securityManager
-	 * Description: 注入 securityManager
-	 * @return SecurityManager 安全管理类
+	 * @Description 注入 securityManager
+	 * @author linkan
+	 * @date 2019/8/19 23:53
+	 * @return org.apache.shiro.mgt.SecurityManager
 	 */
     @Bean
     public SecurityManager securityManager() {
@@ -113,10 +114,12 @@ public class ShiroConfiguration {
         securityManager.setRealm(customRealm()); 
         return securityManager;
     }
+
     /**
-     * Title: customRealm
-     * Description: 注入customRealm
-     * @return CustomRealm
+     * @Description 注入customRealm
+     * @author linkan
+     * @date 2019/8/19 23:53
+     * @return com.xyzq.webapp.shiro.CustomRealm
      */
     @Bean
     public CustomRealm customRealm() {
@@ -125,13 +128,12 @@ public class ShiroConfiguration {
     	customRealm.setCredentialsMatcher(retryLimitHashedCredentialsMatcher());
         return customRealm;
     }
-    
 
-    
     /**
-     * Title: getMethodInvokingFactoryBean
-     * Description:让某个实例的某个方法的返回值注入为Bean的实例
-     * @return MethodInvokingFactoryBean
+     * @Description 让某个实例的某个方法的返回值注入为Bean的实例
+     * @author linkan
+     * @date 2019/8/19 23:54
+     * @return org.springframework.beans.factory.config.MethodInvokingFactoryBean
      */
     @Bean
     public MethodInvokingFactoryBean getMethodInvokingFactoryBean(){
@@ -142,9 +144,10 @@ public class ShiroConfiguration {
     }    
 
     /**
-     * Title: cacheManager
-     * Description: 清除缓存
-     * @return RedisCacheManager
+     * @Description 清除缓存
+     * @author linkan
+     * @date 2019/8/19 23:54
+     * @return com.xyzq.webapp.shiro.RedisCacheManager
      */
     @Bean
     public RedisCacheManager cacheManager(){
@@ -156,21 +159,23 @@ public class ShiroConfiguration {
         redisCacheManager.setExpire(ShiroConstant.REDIS_CACHE_EXPIRE);
         return redisCacheManager;
     }
+
     /**
-     * Title: redisManager
-     * Description: 返回redis管理类
-     * @return RedisManager
+     * @Description 注入redis
+     * @author linkan
+     * @date 2019/8/19 23:54
+     * @return com.xyzq.webapp.redis.RedisManager
      */
     @Bean
     public RedisManager redisManager() {
         return new RedisManager();
     }
-    
 
     /**
-     * Title: sessionListener
-     * Description: 配置session监听
-     * @return ShiroSessionListener
+     * @Description 配置session监听
+     * @author linkan
+     * @date 2019/8/19 23:55
+     * @return com.xyzq.webapp.listener.ShiroSessionListener
      */
     @Bean("sessionListener")
     public ShiroSessionListener sessionListener(){
@@ -178,9 +183,10 @@ public class ShiroConfiguration {
     }
 
     /**
-     * Title: sessionIdCookie
-     * Description:配置保存sessionId的cookie,默认为: JSESSIONID 问题: 与SERVLET容器名冲突,重新定义为sid
-     * @return SimpleCookie
+     * @Description 配置保存sessionId的cookie,默认为: JSESSIONID 问题: 与SERVLET容器名冲突,重新定义为sid
+     * @author linkan
+     * @date 2019/8/19 23:55
+     * @return org.apache.shiro.web.servlet.SimpleCookie
      */
     @Bean("sessionIdCookie")
     public SimpleCookie sessionIdCookie(){
@@ -199,9 +205,10 @@ public class ShiroConfiguration {
     }
 
     /**
-     * Title: sessionManager
-     * Description: 配置会话管理器，设定会话超时及保存
-     * @return SessionManager
+     * @Description 配置会话管理器，设定会话超时及保存
+     * @author linkan
+     * @date 2019/8/19 23:56
+     * @return org.apache.shiro.session.mgt.SessionManager
      */
     @Bean("sessionManager")
     public SessionManager sessionManager() {
@@ -231,9 +238,10 @@ public class ShiroConfiguration {
     }
 
     /**
-     * Title: sessionDAO
-     * Description: sessionDAO
-     * @return SessionDAO
+     * @Description 注入sessionDao
+     * @author linkan
+     * @date 2019/8/19 23:56
+     * @return org.apache.shiro.session.mgt.eis.SessionDAO
      */
     @Bean
     public SessionDAO sessionDAO() {
@@ -245,9 +253,10 @@ public class ShiroConfiguration {
     }
 
     /**
-     * Title: kickoutSessionControlFilter
-     * Description:在线人物并发控制
-     * @return KickoutSessionControlFilter
+     * @Description 在线人数并发控制
+     * @author linkan
+     * @date 2019/8/19 23:56
+     * @return com.xyzq.webapp.shiro.KickoutSessionControlFilter
      */
     @Bean
     public KickoutSessionControlFilter kickoutSessionControlFilter() {
@@ -264,11 +273,12 @@ public class ShiroConfiguration {
         kickoutSessionControlFilter.setKickoutUrl("/login?kickout=1");
         return kickoutSessionControlFilter;
     }
-    
+
     /**
-     * Title: shiroLogoutFilter
-     * Description: 配置自定义登出拦截器
-     * @return ShiroLogoutFilter
+     * @Description 配置自定义登出拦截器
+     * @author linkan
+     * @date 2019/8/19 23:57
+     * @return com.xyzq.webapp.shiro.ShiroLogoutFilter
      */
     private ShiroLogoutFilter shiroLogoutFilter(){
         ShiroLogoutFilter shiroLogoutFilter = new ShiroLogoutFilter();
@@ -278,11 +288,11 @@ public class ShiroConfiguration {
         return shiroLogoutFilter;
     }
 
-    
     /**
-     * Title: shiroDialect
-     * Description:thymeleaf页面使用shiro标签控制按钮是否显示
-     * @return ShiroDialect
+     * @Description thymeleaf页面使用shiro标签控制按钮是否显示
+     * @author linkan
+     * @date 2019/8/19 23:57
+     * @return at.pollux.thymeleaf.shiro.dialect.ShiroDialect
      */
     @Bean
     public ShiroDialect shiroDialect() {
@@ -290,21 +300,22 @@ public class ShiroConfiguration {
     }
 
     /**
-     * Title: sessionIdGenerator
-     * Description: 配置会话ID生成器
-     * @return SessionIdGenerator
+     * @Description 配置会话ID生成器
+     * @author linkan
+     * @date 2019/8/19 23:57
+     * @return org.apache.shiro.session.mgt.eis.SessionIdGenerator
      */
     @Bean
     public SessionIdGenerator sessionIdGenerator() {
         return new JavaUuidSessionIdGenerator();
     }
 
-
     /**
-     * Title: authorizationAttributeSourceAdvisor
-     * Description: 开启shiro 注解模式,可以在controller中的方法前加上注解,如 @RequiresPermissions("userInfo:add")
+     * @Description 开启shiro 注解模式,可以在controller中的方法前加上注解,如 @RequiresPermissions("userInfo:add")
+     * @author linkan
+     * @date 2019/8/19 23:58
      * @param securityManager 安全管理类
-     * @return AuthorizationAttributeSourceAdvisor
+     * @return org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor
      */
     @Bean
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(@Qualifier("securityManager") SecurityManager securityManager){
@@ -314,9 +325,10 @@ public class ShiroConfiguration {
     }
 
     /**
-     * Title: getLifecycleBeanPostProcessor
-     * Description: 配置Shiro生命周期处理器
-     * @return LifecycleBeanPostProcessor
+     * @Description 配置Shiro生命周期处理器
+     * @author linkan
+     * @date 2019/8/19 23:58
+     * @return org.apache.shiro.spring.LifecycleBeanPostProcessor
      */
     @Bean
     public LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
@@ -324,9 +336,10 @@ public class ShiroConfiguration {
     }
 
     /**
-     * Title: retryLimitHashedCredentialsMatcher
-     * Description: 配置密码比较器
-     * @return RetryLimitHashedCredentialsMatcher
+     * @Description 配置密码比较器
+     * @author linkan
+     * @date 2019/8/19 23:58
+     * @return com.xyzq.webapp.shiro.RetryLimitHashedCredentialsMatcher
      */
     @Bean("credentialsMatcher")
     public RetryLimitHashedCredentialsMatcher retryLimitHashedCredentialsMatcher(){
