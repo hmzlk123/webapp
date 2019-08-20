@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en"
-	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		<meta charset="utf-8" />
@@ -28,7 +27,7 @@
 
 		<!-- ace settings handler -->
 		<script th:src="@{/assets/js/ace-extra.min.js}"></script>
-
+		<base th:href="@{${basehref}}"/>
 	</head>
 
 	<body class="no-skin">
@@ -1044,10 +1043,9 @@
 			function reinitIframe(){
 				var iframe = document.getElementById("mainFrame");
 				try{
-					var bHeight = iframe.contentWindow.document.body.scrollHeight;
-					var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
-					var height = Math.max(bHeight, dHeight);
-					iframe.height = bHeight;
+					//var dHeight = iframe.contentWindow.document.documentElement.scrollHeight;
+					//var height = Math.max(bHeight, dHeight);
+					iframe.height = iframe.contentWindow.document.body.scrollHeight;
 				}catch (ex){
 					
 				}
@@ -1056,12 +1054,10 @@
 			
 			function setframeLink(iframe,src) {
 				iframe.attr('src',src);
-			};
-			
-			
+			}
 			jQuery(function($) {
 				//setIframeHeight(document.getElementById('external-frame'));
-				setframeLink($('#mainFrame'),'/home');
+				setframeLink($('#mainFrame'),'home');
 				$('.nav-list li').click(function(){
 					if($(this).find('ul').length==0){
 						$(this).siblings().removeClass('active');
@@ -1069,23 +1065,23 @@
 						$(this).siblings().find('li').removeClass('active');
 						$(this).addClass('active');
 					}
-				});	
-				
+				});
+
 				$('.nav-list li a').click(function(){
-					setframeLink($('#mainFrame'),$(this).data('menu-url'));		
-					
-					
-				});	
-				
+					setframeLink($('#mainFrame'),$(this).data('menu-url'));
+
+
+				});
+
 				$('.dialogs,.comments').ace_scroll({
 					size: 300
 			    });
-				
+
 				$('#breadcrumbs li').click(function(){
 					if($(this).find('i').hasClass('home-icon')){
 						setframeLink($('#mainFrame'),'/home');
 					}
-				});	
+				});
 			})
 		</script>
 	</body>
