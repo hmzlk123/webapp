@@ -24,6 +24,7 @@
 
 		<!-- ace settings handler -->
 		<script th:src="@{/assets/js/ace-extra.min.js}"></script>
+		<base th:href="@{${basehref}}"/>
 	</head>
 
 	<body class="no-skin">
@@ -241,7 +242,7 @@
 				data.enabled = enabled;
 				$.ajax( {     
 		            type: "post",
-		            url: "/um/changeenable",            
+		            url: "um/changeenable",
 		            dataType:"json", 
 		            contentType:"application/json",
 		            data:JSON.stringify(data),
@@ -374,7 +375,7 @@
 			        ],
 			        //"bServerSide": true,
 			        "pagingType": "full_numbers",  	//分页样式：simple,simple_numbers,full,full_numbers
-			        "sAjaxSource": "/um/userlist",
+			        "sAjaxSource": "um/userlist",
 			        "sServerMethod" : "POST",
 			        "fnServerData":retrieveData,		//
 			        //"bProcessing" : true, 			//DataTables载入数据时，是否显示‘进度’提示  
