@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.xyzq.webapp.contants.GlobalProperties;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.DisabledAccountException;
@@ -42,9 +43,12 @@ public class IndexController {
 	
 	private final MenuService menuService;
 
-    public IndexController(UserService userService, MenuService menuService) {
+	private final GlobalProperties globalProperties;
+
+    public IndexController(UserService userService, MenuService menuService,GlobalProperties globalProperties) {
         this.userService = userService;
         this.menuService = menuService;
+        this.globalProperties = globalProperties;
     }
 	private static Logger logger = LoggerFactory.getLogger(IndexController.class);
 
@@ -131,7 +135,8 @@ public class IndexController {
 		}
 		
 		mv.addObject("userinfo", user);	
-		mv.addObject("menulist", treeMenuList);	
+		mv.addObject("menulist", treeMenuList);
+		mv.addObject("basehref",globalProperties.getBaseherf());
 		mv.setViewName("index");
 		return mv;
 	}
