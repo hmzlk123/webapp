@@ -96,7 +96,7 @@ public class IndexController {
     		Model model) {
 		logger.debug("进入登录页面");
     	Object principal = SecurityUtils.getSubject().getPrincipal();
-   
+
         // 如果已经登录，则跳转到首页
         if(principal != null){
             return "redirect:/index";

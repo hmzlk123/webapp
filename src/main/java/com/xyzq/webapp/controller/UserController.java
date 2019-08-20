@@ -1,6 +1,13 @@
 package com.xyzq.webapp.controller;
 
 import java.util.List;
+
+import com.xyzq.webapp.contants.GlobalProperties;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +21,7 @@ import com.xyzq.webapp.entity.DataTableParameter;
 import com.xyzq.webapp.entity.system.User;
 import com.xyzq.webapp.service.system.UserService;
 import com.xyzq.webapp.utils.DataTableUtils;
+import org.springframework.web.servlet.ModelAndView;
 
 
 /**
@@ -31,18 +39,29 @@ public class UserController {
 
 	private final UserService userService;
 
-	public UserController(UserService userService) {
+	private final GlobalProperties globalProperties;
+
+	private static Logger logger = LoggerFactory.getLogger(UserController.class);
+
+	public UserController(UserService userService, GlobalProperties globalProperties) {
 		this.userService = userService;
+		this.globalProperties = globalProperties;
 	}
 
 	/**
-	 * Title userList
-	 * Description 进入用户列表界面
-	 * @return String 页面
+	 * @Description 进入用户管理界面
+	 * @author linkan
+	 * @date 2019/8/20 15:56
+	 * @param mv 模型和视图
+	 * @return org.springframework.web.servlet.ModelAndView
 	 */
+	@RequiresRoles("admin")
 	@RequestMapping("")
-	public String userList() {
-		return "/system/userlist";
+	public ModelAndView userList(ModelAndView mv) {
+		logger.info(String.valueOf(SecurityUtils.getSubject().hasRole("admin")));
+		mv.addObject("basehref",globalProperties.getBaseherf());
+		mv.setViewName("system/userlist");
+		return mv;
 	}
 	
 	/**
@@ -51,6 +70,7 @@ public class UserController {
 	 * @param jsonParam 查询参数
 	 * @return userlist 用户列表
 	 */
+	@RequiresRoles("admin")
     @ResponseBody
     @RequestMapping("/userlist")
     public Object userlist(String jsonParam){
@@ -94,6 +114,7 @@ public class UserController {
 	 */
     @ResponseBody
     @RequestMapping("/changeenable")
+	@RequiresPermissions("userInfo:add")
     public User changeUserEnable(@RequestBody User user){
     	if(user.getEnabled()==0)
     		user.setEnabled(1);
