@@ -1,18 +1,13 @@
 package com.xyzq.webapp.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.xyzq.webapp.contants.GlobalProperties;
+import com.xyzq.webapp.contants.ShiroConstant;
+import com.xyzq.webapp.entity.system.Menu;
+import com.xyzq.webapp.entity.system.User;
+import com.xyzq.webapp.service.system.MenuService;
+import com.xyzq.webapp.service.system.UserService;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AccountException;
-import org.apache.shiro.authc.DisabledAccountException;
-import org.apache.shiro.authc.ExcessiveAttemptsException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import com.xyzq.webapp.contants.ShiroConstant;
-import com.xyzq.webapp.entity.system.Menu;
-import com.xyzq.webapp.entity.system.User;
-import com.xyzq.webapp.service.system.MenuService;
-import com.xyzq.webapp.service.system.UserService;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Package com.xyzq.webapp.controller
@@ -72,7 +66,17 @@ public class IndexController {
 	public String error403() {
 		return "error/404";
 	}
-	
+
+	/**
+	 * @Description 未授权页面跳转
+	 * @author linkan
+	 * @date 2019/8/26 21:39
+	 * @return java.lang.String
+	 */
+	@RequestMapping("/unauthorized")
+	public String unauthorized() {
+		return "error/401";
+	}
     /**
      * Title enter
      * Description 跳转到登录页面
@@ -136,7 +140,7 @@ public class IndexController {
 		
 		mv.addObject("userinfo", user);	
 		mv.addObject("menulist", treeMenuList);
-		mv.addObject("basehref",globalProperties.getBaseherf());
+		mv.addObject("basehref",globalProperties.getBasehref());
 		mv.setViewName("index");
 		return mv;
 	}

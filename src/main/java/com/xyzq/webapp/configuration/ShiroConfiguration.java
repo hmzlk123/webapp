@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.Filter;
 
+import com.xyzq.webapp.shiro.*;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.session.mgt.SessionManager;
@@ -26,12 +27,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.xyzq.webapp.contants.ShiroConstant;
 import com.xyzq.webapp.redis.RedisManager;
-import com.xyzq.webapp.shiro.CustomRealm;
-import com.xyzq.webapp.shiro.KickoutSessionControlFilter;
-import com.xyzq.webapp.shiro.RedisCacheManager;
-import com.xyzq.webapp.shiro.RedisSessionDAO;
-import com.xyzq.webapp.shiro.RetryLimitHashedCredentialsMatcher;
-import com.xyzq.webapp.shiro.ShiroLogoutFilter;
 import com.xyzq.webapp.listener.ShiroSessionListener;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
@@ -84,12 +79,17 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/druid/**", "anon");
         //解决登录成功跳转/favicon.ico的问题
         filterChainDefinitionMap.put("/favicon.ico", "anon");
-        
+        //未授权页面跳转
+        shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");
         //注销
         filterChainDefinitionMap.put("/logout", "logout");
+
         //其余接口一律拦截
         //主要这行代码必须放在所有权限设置的最后，不然会导致所有 url 都被拦截
+        filterChainDefinitionMap.put("/um", "perms[user:view]");
+        filterChainDefinitionMap.put("/um/changeenable", "perms[user:change]");
         filterChainDefinitionMap.put("/**", "authc,kickout");
+
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
@@ -272,6 +272,17 @@ public class ShiroConfiguration {
         //被踢出后重定向到的地址；
         kickoutSessionControlFilter.setKickoutUrl("/login?kickout=1");
         return kickoutSessionControlFilter;
+    }
+
+    /**  
+     * @Description 访问权限拦截器
+     * @author linkan 
+     * @date 2019/8/21 22:37
+     * @return com.xyzq.webapp.shiro.URLPathMatchingFilter  
+     */  
+    @Bean
+    public URLPathMatchingFilter urlPathMatchingFilter() {
+        return new URLPathMatchingFilter();
     }
 
     /**

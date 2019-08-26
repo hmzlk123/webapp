@@ -30,7 +30,8 @@ public class ErrorPageConfiguration {
         return factory -> {
             ErrorPage errorPage404 = new ErrorPage(HttpStatus.NOT_FOUND,"/error-404");
             ErrorPage errorPage403 = new ErrorPage(HttpStatus.FORBIDDEN,"/error-403");
-            factory.addErrorPages(errorPage403,errorPage404);
+            ErrorPage errorPage401 = new ErrorPage(HttpStatus.UNAUTHORIZED,"/error-401");
+            factory.addErrorPages(errorPage401,errorPage403,errorPage404);
         };
     }
 }

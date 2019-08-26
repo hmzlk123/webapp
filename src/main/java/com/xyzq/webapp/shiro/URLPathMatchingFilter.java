@@ -1,8 +1,11 @@
 package com.xyzq.webapp.shiro;
 
 
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.PathMatchingFilter;
+import org.apache.shiro.web.util.WebUtils;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import static org.apache.shiro.SecurityUtils.*;
@@ -22,9 +25,17 @@ public class URLPathMatchingFilter extends PathMatchingFilter {
         String requestURL = getPathWithinApplication(request);
         Subject subject = getSubject();
         if (!subject.isAuthenticated()){
-            // 如果没有登录, 直接返回true 进入登录流程
-            return  true;
+            //如果没有登录, 直接返回true 进入登录流程
+            return true;
         }
-        return false;
+
+        if ("/index".equals(requestURL)){
+            return true;
+        }else {
+            UnauthorizedException ex = new UnauthorizedException("当前用户没有访问路径" + requestURL + "的权限");
+            subject.getSession().setAttribute("ex",ex);
+            WebUtils.issueRedirect(request, response, "/unauthorized");
+            return false;
+        }
     }
 }

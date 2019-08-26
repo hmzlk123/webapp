@@ -56,6 +56,8 @@ public class CustomRealm extends AuthorizingRealm{
         for (Role role : roleList) {
         	authorizationInfo.addRole(role.getRoleName());
 		}
+        //authorizationInfo.addStringPermission("user:view");
+        //authorizationInfo.addStringPermission("user:change");
 		return authorizationInfo;
 	}
 	/**

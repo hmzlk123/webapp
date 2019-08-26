@@ -1,9 +1,7 @@
 package com.xyzq.webapp.contants;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 
@@ -18,8 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix="com.xyzq.webapp")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class GlobalProperties {
-	private String baseherf;
+	private String basehref;                    //上下文路径
 }

@@ -59,7 +59,7 @@ public class UserController {
 	@RequestMapping("")
 	public ModelAndView userList(ModelAndView mv) {
 		logger.info(String.valueOf(SecurityUtils.getSubject().hasRole("admin")));
-		mv.addObject("basehref",globalProperties.getBaseherf());
+		mv.addObject("basehref",globalProperties.getBasehref());
 		mv.setViewName("system/userlist");
 		return mv;
 	}
@@ -114,7 +114,6 @@ public class UserController {
 	 */
     @ResponseBody
     @RequestMapping("/changeenable")
-	@RequiresPermissions("userInfo:add")
     public User changeUserEnable(@RequestBody User user){
     	if(user.getEnabled()==0)
     		user.setEnabled(1);
