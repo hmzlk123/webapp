@@ -247,10 +247,11 @@
 		            contentType:"application/json",
 		            data:JSON.stringify(data),
 		            success: function(data) {   
-		            	jQuery('#dynamic-table').dataTable().fnDraw(false);   
+		            	jQuery('#dynamic-table').dataTable().fnDraw(false);
+						alert(data.msg);
 		            },
 		            error:function(result){
-		            	alert(result);
+		            	alert(result.msg);
 		            }
 		        });    		
 			}

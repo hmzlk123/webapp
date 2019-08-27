@@ -66,6 +66,8 @@ public class ShiroConfiguration {
         filtersMap.put("kickout", kickoutSessionControlFilter());
         //配置自定义登出 覆盖 logout 之前默认的LogoutFilter
         filtersMap.put("logout", shiroLogoutFilter());
+        //
+        filtersMap.put("permsc", shiroPermissionsFilter());
         
         shiroFilterFactoryBean.setFilters(filtersMap);
         // 设置拦截器
@@ -86,8 +88,8 @@ public class ShiroConfiguration {
 
         //其余接口一律拦截
         //主要这行代码必须放在所有权限设置的最后，不然会导致所有 url 都被拦截
-        filterChainDefinitionMap.put("/um", "perms[user:view]");
-        filterChainDefinitionMap.put("/um/changeenable", "perms[user:change]");
+        filterChainDefinitionMap.put("/um", "authc");
+        filterChainDefinitionMap.put("/um/changeenable", "permsc");
         filterChainDefinitionMap.put("/**", "authc,kickout");
 
 
@@ -272,6 +274,12 @@ public class ShiroConfiguration {
         //被踢出后重定向到的地址；
         kickoutSessionControlFilter.setKickoutUrl("/login?kickout=1");
         return kickoutSessionControlFilter;
+    }
+
+
+    @Bean
+    public ShiroPermissionsFilter shiroPermissionsFilter() {
+        return new ShiroPermissionsFilter();
     }
 
     /**  
