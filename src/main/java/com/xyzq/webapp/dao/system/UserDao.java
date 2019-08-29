@@ -1,6 +1,8 @@
 package com.xyzq.webapp.dao.system;
 
 import java.util.List;
+
+import com.xyzq.webapp.entity.system.Permission;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import com.xyzq.webapp.entity.system.Role;
@@ -56,6 +58,14 @@ public interface UserDao {
 	 * @return List<Role> 角色列表
 	 */
 	List<Role> findRoleByName(@Param("userName") String userName);
+
+	/**
+	 * Title: findPermissionByName
+	 * Description: 根据用户名查询权限
+	 * @param userName 用户名
+	 * @return List<Permission> 角色列表
+	 */
+	List<Permission> findPermissionByName(@Param("userName") String userName);
 	
 	/**
 	 * Title: changeUserEnable

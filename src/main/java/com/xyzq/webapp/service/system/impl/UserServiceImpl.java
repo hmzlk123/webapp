@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.xyzq.webapp.entity.system.Permission;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -66,8 +67,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public List<Permission> findPermissionByName(String userName) {
+		return userDao.findPermissionByName(userName);
+	}
+
+	@Override
 	public List<User> findAll() {
-		
 		return userDao.findAll();
 	}
 

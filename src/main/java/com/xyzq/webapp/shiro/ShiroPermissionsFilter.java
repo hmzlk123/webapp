@@ -1,9 +1,14 @@
 package com.xyzq.webapp.shiro;
 
+import com.alibaba.druid.util.StringUtils;
+import com.xyzq.webapp.entity.system.Permission;
+import com.xyzq.webapp.service.system.PermissionService;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -22,24 +27,23 @@ public class ShiroPermissionsFilter extends PermissionsAuthorizationFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(ShiroPermissionsFilter.class);
 
+    @Autowired
+    private PermissionService permissionService;
+
     @Override
     public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws IOException {
 
         // 记录日志
         Subject subject = this.getSubject(request, response);
 
-
-        //true有权限; false没有权限
-        boolean isPermitted = subject.isPermitted("user:change");
-
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-
-
-        String code = httpServletRequest.getParameter("cmd");
-
-
-
-        return isPermitted;
+        //获取url
+        String url = this.getPathWithinApplication(request);
+        //根据url获取permission
+        Permission permission = permissionService.findPermissionByUrl(url);
+        if(permission == null){
+            return true;
+        }
+        return  subject.isPermitted(permission.getPermissionCode());
     }
 
     @Override

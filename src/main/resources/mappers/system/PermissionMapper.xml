@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xyzq.webapp.dao.system.PermissionDao">
+	<resultMap id="PermissionMap" type="com.xyzq.webapp.entity.system.Permission"/>
+
+	<select id="findPermissionByUrl" resultMap="PermissionMap" parameterType="String" >
+		<![CDATA[
+			select * from t_permission t
+		]]>
+		<where>
+			<![CDATA[
+				t.url = #{url}
+			]]>
+		</where>
+	</select>
+</mapper>

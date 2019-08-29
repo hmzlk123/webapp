@@ -3,6 +3,7 @@
 <mapper namespace="com.xyzq.webapp.dao.system.UserDao">
 	<resultMap id="UserResultMap" type="com.xyzq.webapp.entity.system.User"/>
 	<resultMap id="RoleResultMap" type="com.xyzq.webapp.entity.system.Role"/>
+	<resultMap id="PermissionMap" type="com.xyzq.webapp.entity.system.Permission"/>
 	<resultMap id="UserLockedRecordResultMap" type="com.xyzq.webapp.entity.system.UserLockedRecord"/>
 
 	<select id="findByNameAndPassword" resultMap="UserResultMap" parameterType="String" >
@@ -114,8 +115,28 @@
 		]]>	
 		<where>
 			<![CDATA[
-				t1.user_name = #{userName} and t3.role_id IS NOT NULL
+				t1.user_name = #{userName} AND t3.role_id IS NOT NULL
 			]]>	
+		</where>
+	</select>
+
+	<select id="findPermissionByName" resultMap="PermissionMap" parameterType="String" >
+		<![CDATA[
+			SELECT
+				t5.*
+			FROM
+			     t_user t1
+			LEFT JOIN t_user_role t2 ON t1.user_id = t2.user_id
+			LEFT JOIN t_role t3 ON t2.role_id = t3.role_id
+			LEFT JOIN t_role_permission t4 ON t2.role_id = t4.role_id
+			LEFT JOIN t_permission t5 ON t4.permission_id = t5.permission_id
+		]]>
+		<where>
+			<![CDATA[
+				t1.user_name = #{userName}
+				AND t3.role_id IS NOT NULL
+				AND t5.permission_id IS NOT NULL
+			]]>
 		</where>
 	</select>
 	

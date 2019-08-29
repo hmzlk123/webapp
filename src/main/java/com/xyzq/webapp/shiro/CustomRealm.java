@@ -2,6 +2,7 @@ package com.xyzq.webapp.shiro;
 
 import java.util.List;
 
+import com.xyzq.webapp.entity.system.Permission;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -50,14 +51,18 @@ public class CustomRealm extends AuthorizingRealm{
         String userName = (String) SecurityUtils.getSubject().getPrincipal();
         //获取用户角色
         List<Role> roleList = userService.findRoleByName(userName);
+        //获取用户权限
+        List<Permission> permissionList = userService.findPermissionByName(userName);
         
         //添加角色
         SimpleAuthorizationInfo authorizationInfo =  new SimpleAuthorizationInfo();
         for (Role role : roleList) {
         	authorizationInfo.addRole(role.getRoleName());
 		}
-        authorizationInfo.addStringPermission("user:view");
-        //authorizationInfo.addStringPermission("user:change");
+        //添加权限
+        for (Permission permission : permissionList){
+            authorizationInfo.addStringPermission(permission.getPermissionCode());
+        }
 		return authorizationInfo;
 	}
 	/**

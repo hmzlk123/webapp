@@ -2,9 +2,11 @@ package com.xyzq.webapp.service.system;
 
 import java.util.List;
 
+import com.xyzq.webapp.entity.system.Permission;
 import com.xyzq.webapp.entity.system.Role;
 import com.xyzq.webapp.entity.system.User;
 import com.xyzq.webapp.entity.system.UserLockedRecord;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * Package: com.xyzq.webapp.service.system
@@ -54,6 +56,14 @@ public interface UserService {
 	 * @return List<Role> 角色信息列表
 	 */
 	List<Role> findRoleByName(String userName);
+
+	/**
+	 * Title: findPermissionByName
+	 * Description: 根据用户名查询权限
+	 * @param userName 用户名
+	 * @return List<Permission> 角色列表
+	 */
+	List<Permission> findPermissionByName(String userName);
 	
 	/**
 	 * Title: changeUserEnable
