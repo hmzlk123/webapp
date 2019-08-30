@@ -22,6 +22,7 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -56,8 +57,6 @@ public class ShiroConfiguration {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         // setLoginUrl 如果不设置值，默认会自动寻找Web工程根目录下的"/login.jsp"页面 或 "/login" 映射
         shiroFilterFactoryBean.setLoginUrl("/login");
-        // 设置无权限时跳转的 url;
-        //shiroFilterFactoryBean.setUnauthorizedUrl("/login");
         shiroFilterFactoryBean.setSuccessUrl("/index");
 
         //自定义拦截器
@@ -66,8 +65,8 @@ public class ShiroConfiguration {
         filtersMap.put("kickout", kickoutSessionControlFilter());
         //配置自定义登出 覆盖 logout 之前默认的LogoutFilter
         filtersMap.put("logout", shiroLogoutFilter());
-        //
-        filtersMap.put("permsc", shiroPermissionsFilter());
+        //配置自定义url权限拦截器
+        filtersMap.put("custompermission", shiroPermissionsFilter());
         
         shiroFilterFactoryBean.setFilters(filtersMap);
         // 设置拦截器
@@ -88,14 +87,9 @@ public class ShiroConfiguration {
 
         //其余接口一律拦截
         //主要这行代码必须放在所有权限设置的最后，不然会导致所有 url 都被拦截
-        filterChainDefinitionMap.put("/um", "authc");
-        //filterChainDefinitionMap.put("/um/changeenable", "permsc");
-        filterChainDefinitionMap.put("/**", "authc,kickout,permsc");
-
+        filterChainDefinitionMap.put("/**", "authc,kickout,custompermission");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
-
-
         return shiroFilterFactoryBean;
 	}
 
@@ -276,12 +270,6 @@ public class ShiroConfiguration {
         return kickoutSessionControlFilter;
     }
 
-
-    @Bean
-    public ShiroPermissionsFilter shiroPermissionsFilter() {
-        return new ShiroPermissionsFilter();
-    }
-
     /**  
      * @Description 访问权限拦截器
      * @author linkan 
@@ -307,6 +295,30 @@ public class ShiroConfiguration {
         return shiroLogoutFilter;
     }
 
+    /**
+     * @Description 注入自定义权限过滤器
+     * @author linkan
+     * @date 2019/8/30 16:11
+     * @return com.xyzq.webapp.shiro.ShiroPermissionsFilter
+     */
+    @Bean
+    public ShiroPermissionsFilter shiroPermissionsFilter(){
+        return new ShiroPermissionsFilter();
+    }
+
+    /**
+     * @Description 取消权限自定义注入
+     * @author linkan
+     * @date 2019/8/30 16:12
+     * @param shiroPermissionsFilter 自定义权限过滤器
+     * @return org.springframework.boot.web.servlet.FilterRegistrationBean
+     */
+    @Bean
+    public FilterRegistrationBean registrationBean(ShiroPermissionsFilter shiroPermissionsFilter){
+        FilterRegistrationBean registration = new FilterRegistrationBean(shiroPermissionsFilter);
+        registration.setEnabled(false);//怎么取消  Filter自动注册,不会添加到FilterChain中.
+        return registration;
+    }
     /**
      * @Description thymeleaf页面使用shiro标签控制按钮是否显示
      * @author linkan

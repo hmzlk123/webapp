@@ -214,8 +214,11 @@
 		            dataType:"json",  
 		            data: "jsonParam="+JSON.stringify(aoData),  
 		            success: function(data) {   
-		               //$("#url_sortdata").val(data.aaData);  
-		                fnCallback(data); //服务器端返回的对象的returnObject部分是要求的格式     
+		               //$("#url_sortdata").val(data.aaData);
+						if(data.success == false)
+							alert(data.msg);
+		                else
+		                	fnCallback(data); //服务器端返回的对象的returnObject部分是要求的格式
 		                
 		            }
 		        });    
@@ -248,10 +251,11 @@
 		            data:JSON.stringify(data),
 		            success: function(data) {   
 		            	jQuery('#dynamic-table').dataTable().fnDraw(false);
-						alert(data.msg);
+		            	if(data.success == false)
+							alert(data.msg);
 		            },
 		            error:function(result){
-		            	alert(result.msg);
+						alert(result);
 		            }
 		        });    		
 			}

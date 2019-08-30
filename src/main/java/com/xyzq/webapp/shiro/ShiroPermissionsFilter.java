@@ -43,6 +43,7 @@ public class ShiroPermissionsFilter extends PermissionsAuthorizationFilter {
         if(permission == null){
             return true;
         }
+        System.out.println(subject.isPermitted(permission.getPermissionCode()));
         return  subject.isPermitted(permission.getPermissionCode());
     }
 
@@ -58,7 +59,7 @@ public class ShiroPermissionsFilter extends PermissionsAuthorizationFilter {
             httpServletResponse.setCharacterEncoding("UTF-8");
             httpServletResponse.setContentType("application/json");
             //返回禁止访问json字符串
-            httpServletResponse.getWriter().write("{\"success\":false,\"msg\":\"你的权限不足，请充值！\"}");
+            httpServletResponse.getWriter().write("{\"success\":false,\"msg\":\"你没有权限\"}");
         } else {//如果是普通请求进行重定向
             logger.info("----------普通请求拒绝-------------");
             httpServletResponse.sendRedirect("error/401");
