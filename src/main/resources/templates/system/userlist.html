@@ -16,6 +16,9 @@
 		<!-- text fonts -->
 		<link rel="stylesheet" th:href="@{/assets/css/fonts.googleapis.com.css}" />
 
+        <!-- page specific plugin styles -->
+        <link rel="stylesheet" th:href="@{/assets/css/jquery-ui.min.css}" />
+
 		<!-- ace styles -->
 		<link rel="stylesheet" th:href="@{/assets/css/ace.min.css}" class="ace-main-stylesheet" id="main-ace-style" />
 
@@ -34,7 +37,7 @@
 					<!-- PAGE CONTENT BEGINS -->
 					<div class="row">
 						<div class="col-xs-12">
-							<h3 class="header smaller lighter blue">用户列表</h3>
+							<h3 class="header smaller lighter blue">用户列表 <a href="#" id="id-btn-dialog2" class="btn btn-info btn-sm">Confirm Dialog</a></h3>
 							
 							<div class="clearfix">
 								<div class="pull-right tableTools-container" ></div>
@@ -73,7 +76,20 @@
 									<tbody>
 									</tbody>
 								</table>
-								
+
+                                <div id="dialog-confirm" class="hide">
+                                    <div class="alert alert-info bigger-110">
+                                        These items will be permanently deleted and cannot be recovered.
+                                    </div>
+
+                                    <div class="space-6"></div>
+
+                                    <p class="bigger-110 bolder center grey">
+                                        <i class="ace-icon fa fa-hand-o-right blue bigger-120"></i>
+                                        Are you sure?
+                                    </p>
+                                </div>
+
 								<div id="table-detail" class="table-detail" style="display: none">
 									<div class="row">
 										<div class="col-xs-12 col-sm-2">
@@ -85,7 +101,7 @@
 														<a class="user-title-label" href="#">
 															<i class="ace-icon fa fa-circle light-green"></i>
 															&nbsp;
-															<span class="white">Alex M. Doe</span>
+															<span class="white d_pic_name"></span>
 														</a>
 													</div>
 												</div>
@@ -97,51 +113,51 @@
 
 											<div class="profile-user-info profile-user-info-striped">
 												<div class="profile-info-row">
-													<div class="profile-info-name"> Username </div>
+													<div class="profile-info-name"> 用户名 </div>
 
 													<div class="profile-info-value">
-														<span>alexdoe</span>
+														<span class="d_username"></span>
 													</div>
 												</div>
 
 												<div class="profile-info-row">
-													<div class="profile-info-name"> Location </div>
+													<div class="profile-info-name"> 地址 </div>
 
 													<div class="profile-info-value">
 														<i class="fa fa-map-marker light-orange bigger-110"></i>
-														<span>Netherlands, Amsterdam</span>
+														<span class="d_address"></span>
 													</div>
 												</div>
 
 												<div class="profile-info-row">
-													<div class="profile-info-name"> Age </div>
+													<div class="profile-info-name"> 生日 </div>
 
 													<div class="profile-info-value">
-														<span>38</span>
+														<span class="d_birthday"></span>
 													</div>
 												</div>
 
 												<div class="profile-info-row">
-													<div class="profile-info-name"> Joined </div>
+													<div class="profile-info-name"> 部门 </div>
 
 													<div class="profile-info-value">
-														<span>2010/06/20</span>
+														<span class="d_department"></span>
 													</div>
 												</div>
 
 												<div class="profile-info-row">
-													<div class="profile-info-name"> Last Online </div>
+													<div class="profile-info-name"> 创建时间 </div>
 
 													<div class="profile-info-value">
-														<span>3 hours ago</span>
+														<span class="d_create_time"></span>
 													</div>
 												</div>
 
 												<div class="profile-info-row">
-													<div class="profile-info-name"> About Me </div>
+													<div class="profile-info-name"> 简介 </div>
 
 													<div class="profile-info-value">
-														<span>Bio</span>
+														<span class="d_introduction"></span>
 													</div>
 												</div>
 											</div>
@@ -190,7 +206,8 @@
 			if('ontouchstart' in document.documentElement) document.write("<script th:src='@{/assets/js/jquery.mobile.custom.min.js}'>"+"<"+"/script>");
 		</script>
 		<script th:src="@{/assets/js/bootstrap.min.js}"></script>
-
+        <script th:src="@{/assets/js/jquery.ui.touch-punch.min.js}"></script>
+        <script th:src="@{/assets/js/jquery-ui.min.js}"></script>
 		<!-- page specific plugin scripts -->
 		<script th:src="@{/assets/js/jquery.dataTables.min.js}"></script>
 		<script th:src="@{/assets/js/jquery.dataTables.bootstrap.min.js}"></script>
@@ -222,21 +239,64 @@
 		                
 		            }
 		        });    
-		    } 
-	
-			function delUser(obj){
-				var tableDatail = $('#table-detail').clone();
+		    }
+
+            Date.prototype.Format = function (fmt) { //author: meizz
+                var o = {
+                    "M+": this.getMonth() + 1, //月份
+                    "d+": this.getDate(), //日
+                    "H+": this.getHours(), //小时
+                    "m+": this.getMinutes(), //分
+                    "s+": this.getSeconds(), //秒
+                    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                    "S": this.getMilliseconds() //毫秒
+                };
+                if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                for (var k in o)
+                    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                return fmt;
+            }
+
+            function showDatails(obj,userId){
+				var tableDetail = $('#table-detail').clone();
 				var thisTr = $(obj).closest('tr');
 				var nextTr = $(obj).closest('tr').next();
 				if(nextTr.hasClass('detail-row')){
 					thisTr.next().remove();
 				}else{
-					$(obj).closest('tr').after('<tr class="detail-row open"><td colspan="8"></td></tr>');
-					$(obj).closest('tr').next().find('td').append(tableDatail);
-					$(obj).closest('tr').next().find('.table-detail').attr('style','display:block');
-				}
-				
-				$(obj).find(ace.vars['.icon']).toggleClass('fa-angle-double-down').toggleClass('fa-angle-double-up');
+                    $.ajax( {
+                        type: "post",
+                        url: "user/detail",
+                        data: {
+                            "userId":userId
+                        },
+                        success: function(data) {
+                            if(data.success == false){
+                                alert(data.msg);
+                            }else{
+                                $(obj).closest('tr').after('<tr class="detail-row open"><td colspan="8"></td></tr>');
+                                $(obj).closest('tr').next().find('td').append(tableDetail);
+                                $(obj).closest('tr').next().find('.table-detail').attr('style','display:block');
+                                var birthday = new Date(data.birthday);
+                                var createTime = new Date(data.createTime);
+                                tableDetail.find(".d_pic_name").html(data.name);
+                                tableDetail.find(".d_username").html(data.name);
+                                tableDetail.find(".d_address").html(data.address);
+                                tableDetail.find(".d_birthday").html(birthday.Format("yyyy-MM-dd"));
+                                tableDetail.find(".d_department").html(data.department);
+                                tableDetail.find(".d_create_time").html(createTime.Format("yyyy-MM-dd HH:mm:ss"));
+                                tableDetail.find(".d_introduction").html(data.introduction);
+
+                                $(obj).find(ace.vars['.icon']).toggleClass('fa-angle-double-down').toggleClass('fa-angle-double-up');
+                            }
+                        },
+                        error:function(result){
+                            alert(result);
+                        }
+                    });
+                }
+
+
 			}
 			
 			function changeUserEnable(userId,enabled){
@@ -245,7 +305,7 @@
 				data.enabled = enabled;
 				$.ajax( {     
 		            type: "post",
-		            url: "um/changeenable",
+		            url: "user/changeenable",
 		            dataType:"json", 
 		            contentType:"application/json",
 		            data:JSON.stringify(data),
@@ -284,9 +344,9 @@
 					  },
 					  {	
 						"bSortable": false,
-						"render": function (data, type) {
+						"render": function (data,type,full,row) {
 							var style = "<div class='action-buttons'>"+
-										"<a href='javascript:;'  class='green bigger-140 show-details-btn' onclick='delUser(this)' title='Show Details'>"+		
+										"<a href='javascript:;'  class='green bigger-140 show-details-btn' onclick='showDatails(this,\""+full.userId+"\")' title='Show Details'>"+
 										"<i class='ace-icon fa fa-angle-double-down'></i>"+
 										"<span class='sr-only'>Details</span>"+
 										"</b>"+
@@ -295,7 +355,8 @@
 		               	}
 					  },
 					  { 
-						"mDataProp": "userName"
+						"mDataProp": "userName",
+                        "bSortable": false
 					  },
 					  { 
 						"mDataProp": "name",
@@ -320,32 +381,32 @@
 					  },
 					  { 
 						"mDataProp": "locked",
-						"render": function (data,type,full,row) {
-							var str = "<span class='label label-info'>Normal</span>";
-							var lockedstyle = "";
-							var enabledstyle = "";
-							if(data == 1){
-								lockedstyle = "<span class='label label-warning arrowed-right'>Locked</span>";
-								str = "";
-							}
-							if(full.enabled == 0){
-								enabledstyle = "<span class='label label-danger arrowed-in'>Disable</span>";
-								str = "";
-							}
-													
-		                    return lockedstyle+enabledstyle+str ;
-		               	}
-							
-					  },
-					  { 
+                        "bSortable": false,
+                        "render": function (data,type,full,row) {
+                            var str = "<span class='label label-info'>Normal</span>";
+                            var lockedstyle = "";
+                            var enabledstyle = "";
+                            if(data == 1){
+                                lockedstyle = "<span class='label label-warning arrowed-right'>Locked</span>";
+                                str = "";
+                            }
+                            if(full.enabled == 0){
+                                enabledstyle = "<span class='label label-danger arrowed-in'>Disable</span>";
+                                str = "";
+                            }
 
-				
+                            return lockedstyle+enabledstyle+str ;
+		               	}
+					  },
+					  {
+                        "bSortable": false,
 						"mDataProp": "locked",
 						"render": function (data,type,full,row) {
 							var lockclass ="";
 							var enableclass = "fa fa-ban";
 							if(data == 1)	
-								lockclass = "fa fa-lock-open";
+								lockclass = "fa fa-unlock";
+
 								
 							if(full.enabled == 1)
 								enableclass = "fa fa-ban";
@@ -354,11 +415,11 @@
 							
 							var div = 
 							"<div class='hidden-sm hidden-xs action-buttons'>"+
-							"<a class='green' href='#'><i class='ace-icon fa fa-search-plus bigger-130'></i></a>"+
-							"<a class='blue' href='#'><i class='ace-icon fa fa-user-edit bigger-130'></i></a>"+
-							"<a class='orange' href='javascript:;' onclick='delUser(\""+full.userId+"\")'><i class='ace-icon fa fa-trash  bigger-130'></i></a>"+
-							"<a class='red' href='javascript:;' onclick='changeUserEnable(\""+full.userId+"\",\""+full.enabled+"\")'><i class='ace-icon "+enableclass+" bigger-130'></i></a>"+
-							"<a class='dark' href='#'><i class='ace-icon "+lockclass+" bigger-130'></i></a>"+						
+							"<a class='blue' href='javascript:;' title='修改信息'><i class='ace-icon fa fa-edit bigger-150'></i></a>"+
+							/*"<a class='blue' href='#'><i class='ace-icon fa fa-user-edit bigger-130'></i></a>"+*/
+							"<a class='orange' href='javascript:;' title='删除' onclick='delUser(\""+full.userId+"\")'><i class='ace-icon fa fa-trash  bigger-150'></i></a>"+
+							"<a class='red' href='javascript:;' title='禁用/解禁' onclick='changeUserEnable(\""+full.userId+"\",\""+full.enabled+"\")'><i class='ace-icon "+enableclass+" bigger-150'></i></a>"+
+							"<a style='color: gold' href='javascript:;' title='解锁' onclick='alert(11)'><i class='ace-icon "+lockclass+" bigger-150'></i></a>"+
 							"</div>";				
 		                    return div ;
 		               	}
@@ -375,12 +436,12 @@
 					],
 					
 					"lengthMenu": [
-			            [5, 10, 20],
-			            [5, 10, 20] // 更改每页显示记录数
+			            [10, 20, 50],
+			            [10, 20, 50] // 更改每页显示记录数
 			        ],
 			        //"bServerSide": true,
 			        "pagingType": "full_numbers",  	//分页样式：simple,simple_numbers,full,full_numbers
-			        "sAjaxSource": "um/userlist",
+			        "sAjaxSource": "user/userlist",
 			        "sServerMethod" : "POST",
 			        "fnServerData":retrieveData,		//
 			        //"bProcessing" : true, 			//DataTables载入数据时，是否显示‘进度’提示  
@@ -530,7 +591,35 @@
 				//And for the first simple table, which doesn't have TableTools or dataTables
 				//select/deselect all rows according to table header checkbox
 				var active_class = 'active';
-				
+
+                $( "#id-btn-dialog2" ).on('click', function(e) {
+                    e.preventDefault();
+                    var html = "<div class='widget-header'><h4 class='smaller'><i class='ace-icon fa fa-exclamation-triangle red'></i> Empty the recycle bin?</h4></div>";
+                    $( "#dialog-confirm" ).removeClass('hide').dialog({
+                        resizable: false,
+                        width: '320',
+                        modal: true,
+                        title: html,
+                        title_html: true,
+                        buttons: [
+                            {
+                                html: "<i class='ace-icon fa fa-trash-o bigger-110'></i>&nbsp; Delete all items",
+                                "class" : "btn btn-danger btn-minier",
+                                click: function() {
+                                    $( this ).dialog( "close" );
+                                }
+                            }
+                            ,
+                            {
+                                html: "<i class='ace-icon fa fa-times bigger-110'></i>&nbsp; Cancel",
+                                "class" : "btn btn-minier",
+                                click: function() {
+                                    $( this ).dialog( "close" );
+                                }
+                            }
+                        ]
+                    });
+                });
 			})
 		</script>
 	</body>

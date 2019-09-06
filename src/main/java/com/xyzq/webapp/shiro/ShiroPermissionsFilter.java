@@ -2,8 +2,11 @@ package com.xyzq.webapp.shiro;
 
 import com.alibaba.druid.util.StringUtils;
 import com.xyzq.webapp.entity.system.Permission;
+import com.xyzq.webapp.entity.system.Role;
 import com.xyzq.webapp.service.system.PermissionService;
+import com.xyzq.webapp.service.system.RoleService;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +17,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Package com.xyzq.webapp.shiro
@@ -30,6 +35,9 @@ public class ShiroPermissionsFilter extends PermissionsAuthorizationFilter {
     @Autowired
     private PermissionService permissionService;
 
+    @Autowired
+    private RoleService roleService;
+
     @Override
     public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws IOException {
 
@@ -38,11 +46,24 @@ public class ShiroPermissionsFilter extends PermissionsAuthorizationFilter {
 
         //获取url
         String url = this.getPathWithinApplication(request);
+        //判断是否是菜单URL
+        if(url.startsWith("/")){
+            String menuUrl = url.replace("/","");
+            List<Role> menuRoleList = roleService.findRoleByMenuUrl(menuUrl);
+
+            for(Role role : menuRoleList){
+                if (subject.hasRole(role.getRoleName())){
+                    return true;
+                }
+            }
+        }
+
         //根据url获取permission
         Permission permission = permissionService.findPermissionByUrl(url);
         if(permission == null){
-            return true;
+            return false;
         }
+
         System.out.println(subject.isPermitted(permission.getPermissionCode()));
         return  subject.isPermitted(permission.getPermissionCode());
     }
@@ -62,7 +83,7 @@ public class ShiroPermissionsFilter extends PermissionsAuthorizationFilter {
             httpServletResponse.getWriter().write("{\"success\":false,\"msg\":\"你没有权限\"}");
         } else {//如果是普通请求进行重定向
             logger.info("----------普通请求拒绝-------------");
-            httpServletResponse.sendRedirect("error/401");
+            httpServletResponse.sendRedirect("unauthorized");
         }
         return false;
     }

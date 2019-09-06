@@ -64,6 +64,17 @@ public class IndexController {
      */
 	@RequestMapping("/error-403")
 	public String error403() {
+		return "error/403";
+	}
+
+	/**
+	 * @Description 跳转404页面
+	 * @author linkan
+	 * @date 2019/8/14 14:35
+	 * @return java.lang.String
+	 */
+	@RequestMapping("/error-404")
+	public String error404() {
 		return "error/404";
 	}
 
@@ -75,6 +86,7 @@ public class IndexController {
 	 */
 	@RequestMapping("/unauthorized")
 	public String unauthorized() {
+
 		return "error/401";
 	}
     /**

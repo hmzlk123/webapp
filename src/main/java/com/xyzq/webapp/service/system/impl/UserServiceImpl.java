@@ -41,6 +41,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User findById(String userId) {
+		return userDao.findById(userId);
+	}
+
+	@Override
 	public User findByName(String userName) {
 		//先查询redis缓存数据
 		User user = redisTemplate.opsForValue().get(USER_KEY_PREFIX+userName);

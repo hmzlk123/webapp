@@ -26,6 +26,15 @@ public interface UserService {
 	 * @return User 用户信息
 	 */
 	User findByNameAndPassword(String userName, String password);
+
+	/**
+	 * @Description 根据用户编号查找用户
+	 * @author linkan
+	 * @date 2019/9/6 14:45
+	 * @param userId  用户编号
+	 * @return com.xyzq.webapp.entity.system.User
+	 */
+	User findById(String userId);
 	
 	/**
 	 * Title: findByName

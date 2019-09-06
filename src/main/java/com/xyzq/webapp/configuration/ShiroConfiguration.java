@@ -1,12 +1,9 @@
 package com.xyzq.webapp.configuration;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.servlet.Filter;
-
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import com.xyzq.webapp.contants.ShiroConstant;
+import com.xyzq.webapp.listener.ShiroSessionListener;
+import com.xyzq.webapp.redis.RedisManager;
 import com.xyzq.webapp.shiro.*;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.SessionListener;
@@ -20,17 +17,17 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.xyzq.webapp.contants.ShiroConstant;
-import com.xyzq.webapp.redis.RedisManager;
-import com.xyzq.webapp.listener.ShiroSessionListener;
-
-import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import javax.servlet.Filter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @Package com.xyzq.webapp.configuration
@@ -58,6 +55,8 @@ public class ShiroConfiguration {
         // setLoginUrl 如果不设置值，默认会自动寻找Web工程根目录下的"/login.jsp"页面 或 "/login" 映射
         shiroFilterFactoryBean.setLoginUrl("/login");
         shiroFilterFactoryBean.setSuccessUrl("/index");
+        //未授权页面跳转
+        shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");
 
         //自定义拦截器
         Map<String, Filter> filtersMap = new LinkedHashMap<>();
@@ -80,14 +79,18 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/druid/**", "anon");
         //解决登录成功跳转/favicon.ico的问题
         filterChainDefinitionMap.put("/favicon.ico", "anon");
-        //未授权页面跳转
-        shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");
+
         //注销
         filterChainDefinitionMap.put("/logout", "logout");
 
+
+        filterChainDefinitionMap.put("/user/**", "custompermission");
+        filterChainDefinitionMap.put("/role/**", "custompermission");
+        filterChainDefinitionMap.put("/menu/**", "custompermission");
+
         //其余接口一律拦截
         //主要这行代码必须放在所有权限设置的最后，不然会导致所有 url 都被拦截
-        filterChainDefinitionMap.put("/**", "authc,kickout,custompermission");
+        filterChainDefinitionMap.put("/**", "authc,kickout");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
@@ -307,19 +310,6 @@ public class ShiroConfiguration {
     }
 
     /**
-     * @Description 取消权限自定义注入
-     * @author linkan
-     * @date 2019/8/30 16:12
-     * @param shiroPermissionsFilter 自定义权限过滤器
-     * @return org.springframework.boot.web.servlet.FilterRegistrationBean
-     */
-    @Bean
-    public FilterRegistrationBean registrationBean(ShiroPermissionsFilter shiroPermissionsFilter){
-        FilterRegistrationBean registration = new FilterRegistrationBean(shiroPermissionsFilter);
-        registration.setEnabled(false);//怎么取消  Filter自动注册,不会添加到FilterChain中.
-        return registration;
-    }
-    /**
      * @Description thymeleaf页面使用shiro标签控制按钮是否显示
      * @author linkan
      * @date 2019/8/19 23:57
@@ -364,6 +354,11 @@ public class ShiroConfiguration {
     @Bean
     public LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
         return new LifecycleBeanPostProcessor();
+    }
+
+    @Bean
+    public static DefaultAdvisorAutoProxyCreator getDefaultAdvisorAutoProxyCreator(){
+        return new DefaultAdvisorAutoProxyCreator();
     }
 
     /**

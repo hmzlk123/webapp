@@ -34,7 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
  * Version: 0.0.1
  */
 @Controller
-@RequestMapping("/um")
+@RequestMapping("/user")
 public class UserController {
 
 	private final UserService userService;
@@ -55,7 +55,6 @@ public class UserController {
 	 * @param mv 模型和视图
 	 * @return org.springframework.web.servlet.ModelAndView
 	 */
-	@RequiresRoles("admin")
 	@RequestMapping("")
 	public ModelAndView userList(ModelAndView mv) {
 		logger.info(String.valueOf(SecurityUtils.getSubject().hasRole("admin")));
@@ -70,7 +69,6 @@ public class UserController {
 	 * @param jsonParam 查询参数
 	 * @return userlist 用户列表
 	 */
-	@RequiresRoles("admin")
     @ResponseBody
     @RequestMapping("/userlist")
     public Object userlist(String jsonParam){
@@ -104,6 +102,19 @@ public class UserController {
         dt.setRecordsTotal((int)userPageList.getTotal());
         dt.setRecordsFiltered((int)userPageList.getTotal());
         return JSONObject.toJSONString(dt);
+    }
+
+    /**
+     * @Description 根据用户编号查找用户详情
+     * @author linkan
+     * @date 2019/9/6 14:49
+     * @param userId 用户编号
+     * @return com.xyzq.webapp.entity.system.User
+     */
+    @ResponseBody
+    @RequestMapping("/detail")
+    public User findUserById(String userId){
+        return userService.findById(userId);
     }
 
 	/**

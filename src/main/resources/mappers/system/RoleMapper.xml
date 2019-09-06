@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xyzq.webapp.dao.system.RoleDao">
+	<resultMap id="RoleMap" type="com.xyzq.webapp.entity.system.Role"/>
+
+	<select id="findRoleByMenuUrl" resultMap="RoleMap" parameterType="String" >
+		<![CDATA[
+			SELECT
+				t1.*
+			FROM
+				t_role t1
+				LEFT JOIN t_role_menu t2 ON t1.role_id = t2.role_id
+				LEFT JOIN t_menu t3 ON t2.menu_id = t3.menu_id
+		]]>
+		<where>
+			<![CDATA[
+				t3.url = #{url}
+			]]>
+		</where>
+	</select>
+</mapper>

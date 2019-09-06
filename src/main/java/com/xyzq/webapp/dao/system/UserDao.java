@@ -30,6 +30,15 @@ public interface UserDao {
 	User findByNameAndPassword(@Param("userName") String userName, @Param("password") String password);
 
 	/**
+	 * @Description 根据用户编号查找用户
+	 * @author linkan
+	 * @date 2019/9/6 14:45
+	 * @param userId  用户编号
+	 * @return com.xyzq.webapp.entity.system.User
+	 */
+	User findById(@Param("userId") String userId);
+
+	/**
 	 * Title: findAll
 	 * Description:  查找全部用户
 	 * @return	List<User> 用户列表
