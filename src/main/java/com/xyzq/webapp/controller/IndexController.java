@@ -56,6 +56,12 @@ public class IndexController {
 		return "login";
 	}
 
+
+	@RequestMapping("/home")
+	public String home() {
+		return "home";
+	}
+
     /**
      * @Description 跳转403页面
      * @author linkan

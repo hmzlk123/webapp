@@ -37,7 +37,7 @@
 					<!-- PAGE CONTENT BEGINS -->
 					<div class="row">
 						<div class="col-xs-12">
-							<h3 class="header smaller lighter blue">用户列表 <a href="#" id="id-btn-dialog2" class="btn btn-info btn-sm">Confirm Dialog</a></h3>
+							<h3 class="header smaller lighter blue">用户列表 </h3>
 							
 							<div class="clearfix">
 								<div class="pull-right tableTools-container" ></div>
@@ -77,18 +77,40 @@
 									</tbody>
 								</table>
 
-                                <div id="dialog-confirm" class="hide">
-                                    <div class="alert alert-info bigger-110">
-                                        These items will be permanently deleted and cannot be recovered.
-                                    </div>
+								<div class="col-sm-6">
+									<h3 class="header blue lighter smaller">
+										<i class="ace-icon fa fa-list-alt smaller-90"></i>
+										Dialogs
+									</h3>
+									<a href="#" id="id-btn-dialog2" class="btn btn-info btn-sm">Confirm Dialog</a>
+									<a href="#" id="id-btn-dialog1" class="btn btn-purple btn-sm">Modal Dialog</a>
 
-                                    <div class="space-6"></div>
+									<div id="dialog-message" class="hide">
+										<p>
+											This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.
+										</p>
 
-                                    <p class="bigger-110 bolder center grey">
-                                        <i class="ace-icon fa fa-hand-o-right blue bigger-120"></i>
-                                        Are you sure?
-                                    </p>
-                                </div>
+										<div class="hr hr-12 hr-double"></div>
+
+										<p>
+											Currently using
+											<b>36% of your storage space</b>.
+										</p>
+									</div><!-- #dialog-message -->
+
+									<div id="dialog-confirm" class="hide">
+										<div class="alert alert-info bigger-110">
+											These items will be permanently deleted and cannot be recovered.
+										</div>
+
+										<div class="space-6"></div>
+
+										<p class="bigger-110 bolder center grey">
+											<i class="ace-icon fa fa-hand-o-right blue bigger-120"></i>
+											Are you sure?
+										</p>
+									</div><!-- #dialog-confirm -->
+								</div><!-- ./span -->
 
 								<div id="table-detail" class="table-detail" style="display: none">
 									<div class="row">
@@ -217,6 +239,8 @@
 		<script th:src="@{/assets/js/buttons.print.min.js}"></script>
 		<script th:src="@{/assets/js/buttons.colVis.min.js}"></script>
 		<script th:src="@{/assets/js/dataTables.select.min.js}"></script>
+		<script th:src="@{/assets/js/jquery-ui.min.js}"></script>
+		<script th:src="@{/assets/js/jquery.ui.touch-punch.min.js}"></script>
 		<!-- ace scripts -->
 		<script th:src="@{/assets/js/ace-elements.min.js}"></script>
 		<script th:src="@{/assets/js/ace.min.js}"></script>
@@ -321,7 +345,76 @@
 			}
 			
 			jQuery(function($) {
-		
+				$.widget("ui.dialog", $.extend({}, $.ui.dialog.prototype, {
+					_title: function(title) {
+						var $title = this.options.title || '&nbsp;'
+						if( ("title_html" in this.options) && this.options.title_html == true )
+							title.html($title);
+						else title.text($title);
+					}
+				}));
+
+				$( "#id-btn-dialog2" ).on('click', function(e) {
+					e.preventDefault();
+
+					$( "#dialog-confirm" ).removeClass('hide').dialog({
+						resizable: false,
+						width: '320',
+						modal: true,
+						title: "<div class='widget-header'><h4 class='smaller'><i class='ace-icon fa fa-exclamation-triangle red'></i> Empty the recycle bin?</h4></div>",
+						title_html: true,
+						buttons: [
+							{
+								html: "<i class='ace-icon fa fa-trash-o bigger-110'></i>&nbsp; Delete all items",
+								"class" : "btn btn-danger btn-minier",
+								click: function() {
+									$( this ).dialog( "close" );
+								}
+							}
+							,
+							{
+								html: "<i class='ace-icon fa fa-times bigger-110'></i>&nbsp; Cancel",
+								"class" : "btn btn-minier",
+								click: function() {
+									$( this ).dialog( "close" );
+								}
+							}
+						]
+					});
+				});
+
+				$( "#id-btn-dialog1" ).on('click', function(e) {
+					e.preventDefault();
+
+					var dialog = $( "#dialog-message" ).removeClass('hide').dialog({
+						modal: true,
+						title: "<div class='widget-header widget-header-small'><h4 class='smaller'><i class='ace-icon fa fa-check'></i> jQuery UI Dialog</h4></div>",
+						title_html: true,
+						buttons: [
+							{
+								text: "Cancel",
+								"class" : "btn btn-minier",
+								click: function() {
+									$( this ).dialog( "close" );
+								}
+							},
+							{
+								text: "OK",
+								"class" : "btn btn-primary btn-minier",
+								click: function() {
+									$( this ).dialog( "close" );
+								}
+							}
+						]
+					});
+
+					/**
+					 dialog.data( "uiDialog" )._title = function(title) {
+                            title.html( this.options.title );
+                        };
+					 **/
+				});
+
 				//initiate dataTables plugin
 				var myTable = 
 				$('#dynamic-table')
@@ -585,41 +678,10 @@
 					e.stopPropagation();
 					e.preventDefault();
 				});
-				
-				
-				
-				//And for the first simple table, which doesn't have TableTools or dataTables
-				//select/deselect all rows according to table header checkbox
-				var active_class = 'active';
 
-                $( "#id-btn-dialog2" ).on('click', function(e) {
-                    e.preventDefault();
-                    var html = "<div class='widget-header'><h4 class='smaller'><i class='ace-icon fa fa-exclamation-triangle red'></i> Empty the recycle bin?</h4></div>";
-                    $( "#dialog-confirm" ).removeClass('hide').dialog({
-                        resizable: false,
-                        width: '320',
-                        modal: true,
-                        title: html,
-                        title_html: true,
-                        buttons: [
-                            {
-                                html: "<i class='ace-icon fa fa-trash-o bigger-110'></i>&nbsp; Delete all items",
-                                "class" : "btn btn-danger btn-minier",
-                                click: function() {
-                                    $( this ).dialog( "close" );
-                                }
-                            }
-                            ,
-                            {
-                                html: "<i class='ace-icon fa fa-times bigger-110'></i>&nbsp; Cancel",
-                                "class" : "btn btn-minier",
-                                click: function() {
-                                    $( this ).dialog( "close" );
-                                }
-                            }
-                        ]
-                    });
-                });
+
+
+
 			})
 		</script>
 	</body>
